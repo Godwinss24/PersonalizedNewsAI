@@ -1,30 +1,45 @@
-import { Table, Column, Model, DataType } from "sequelize-typescript";
-import { CreationOptional } from "sequelize";
+import {
+  CreationOptional,
+  DataTypes,
+  InferAttributes,
+  InferCreationAttributes,
+  Model,
+} from "sequelize";
+import { UserCategory } from "../enums/categories.enum";
+import sequelize from "../config/db";
 
-enum Category {
-  TECH = "tech",
-  SPORTS = "sports",
-  HEALTH = "health",
+class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
+  declare id: CreationOptional<string>;
+  declare email: string;
+  declare password: string;
+  declare category: UserCategory;
 }
 
-@Table({ tableName: "users" })
-export class User extends Model<User> {
-  @Column({ type: DataType.STRING, allowNull: false })
-  email!: string;
+User.init(
+  {
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true,
+    },
+    email: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
+    },
+    password: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    category: {
+      type: DataTypes.ENUM(...Object.values(UserCategory)), // Pull enum values into Sequelize ENUM
+      allowNull: false,
+    },
+  },
+  {
+    sequelize,
+    modelName: "User",
+  }
+);
 
-  @Column({ type: DataType.STRING, allowNull: false })
-  password!: string;
-
-  @Column({
-    type: DataType.ENUM(...Object.values(Category)),
-    allowNull: false,
-  })
-  category!: Category;
-
-  @Column({
-    type: DataType.INTEGER,
-    autoIncrement: true,
-    primaryKey: true,
-  })
-  id!: CreationOptional<number>;
-}
+export default User;
