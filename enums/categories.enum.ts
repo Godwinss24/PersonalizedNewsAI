@@ -1,5 +1,5 @@
 export enum UserCategory {
-  HOME = "Home",
+  ALL = "All",
   NEWS = "News",
   SPORT = "Sport",
   BUSINESS = "Business",

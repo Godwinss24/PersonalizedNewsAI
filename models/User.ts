@@ -12,7 +12,7 @@ class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
   declare id: CreationOptional<string>;
   declare email: string;
   declare password: string;
-  declare category: UserCategory;
+  declare category: UserCategory[];
 }
 
 User.init(
@@ -32,7 +32,8 @@ User.init(
       allowNull: false,
     },
     category: {
-      type: DataTypes.ENUM(...Object.values(UserCategory)), // Pull enum values into Sequelize ENUM
+      type: DataTypes.ARRAY(DataTypes.ENUM(...Object.values(UserCategory))),
+      defaultValue: [UserCategory.ALL],
       allowNull: false,
     },
   },

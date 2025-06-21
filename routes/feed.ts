@@ -1,8 +1,14 @@
 import express, { Response, Router } from "express";
 import { Parser } from "xml2js";
-import { extractBBCArticle } from "../services/scraper";
+import { RSSController } from "../controller/rss/rss.controller";
+import {  SportRSS, TechRSS } from "../services/rss.service";
 
 const router = express.Router();
+const techService = new TechRSS();
+const sportService = new SportRSS();
+
+const rssController = new RSSController(techService, sportService);
+
 
 router.get("/", async (req, res) => {
   const response = await fetch("https://www.bbc.co.uk/news/technology/rss.xml");
@@ -37,5 +43,8 @@ router.get("/", async (req, res) => {
     ),
   });
 });
+
+router.post('/news', rssController.getNews.bind(rssController));
+
 
 module.exports = router;
