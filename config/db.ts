@@ -11,7 +11,7 @@ if (!dbURL) {
 
 const sequelize = new Sequelize(dbURL as string, {
   dialect: "postgres",
-  logging: process.env.NODE_ENV === "production" ? false : console.log,
+  logging: false
 });
 
 export default sequelize;
