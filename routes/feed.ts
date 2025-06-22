@@ -32,6 +32,8 @@ import {
   ClimateRSS,
   CoronavirusRSS
 } from "../services/rss.service";
+import authenticateToken from "../middleware/auth";
+import { GeminiAI } from "../services/gemini.service";
 
 const router = express.Router();
 
@@ -98,38 +100,88 @@ const rssController = new RSSController(
 
 
 router.get("/", async (req, res) => {
-  const response = await fetch("https://www.bbc.co.uk/news/technology/rss.xml");
-
-  // Get raw XML text
-  const xml = await response.text();
-
-  // Parse XML
-  const parser = new Parser({ explicitArray: false });
-  const parsed = await parser.parseStringPromise(xml);
-
-  // Get news items
-  const items = parsed.rss.channel.item;
-
-  res.status(200).json({
-    success: true,
-    count: items.length,
-    data: items.map(
-      (item: {
-        title: any;
-        link: any;
-        pubDate: any;
-        description: any;
-        category: any;
-      }) => ({
-        title: item.title,
-        link: item.link,
-        pubDate: item.pubDate,
-        description: item.description,
-        category: item.category,
-      })
-    ),
-  });
+  const text = 'The BBC is threatening to take legal action against an artificial intelligence (AI) firm whose chatbot the corporation says is reproducing BBC content "verbatim" without its permission.The BBC has written to Perplexity, which is based in the US, demanding it immediately stops using BBC content, deletes any it holds, and proposes financial compensation for the material it has already used.It is the first time that the BBC - one of the world\'s largest news organisations - has taken such action against an AI company.In a statement, Perplexity said: "The BBC\'s claims are just one more part of the overwhelming evidence that the BBC will do anything to preserve Google\'s illegal monopoly."'
+  const gemini = new GeminiAI();
+  const summary = await gemini.summarize(text);
+  console.log(summary);
+  res.status(200).json({"message": "hello"});
 });
+
+/**
+ * @swagger
+ * /feed/news:
+ *   post:
+ *     summary: Fetch news from a specific category
+ *     tags:
+ *       - User
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - newsType
+ *             properties:
+ *               newsType:
+ *                 type: string
+ *                 enum:
+ *                   - SPORT
+ *                   - TECH
+ *                   - WORLD
+ *                   - BUSINESS
+ *                   - POLITICS
+ *                   - HEALTH
+ *                   - SCIENCE
+ *                   - ENTERTAINMENT
+ *                   - UK
+ *                   - ENGLAND
+ *                   - WALES
+ *                   - SCOTLAND
+ *                   - NORTHERN_IRELAND
+ *                   - MAGAZINE
+ *                   - EDUCATION
+ *                   - IN_PICTURES
+ *                   - VIDEO_AND_AUDIO
+ *                   - NEWSBEAT
+ *                   - STORIES
+ *                   - HAVE_YOUR_SAY
+ *                   - WORLD_AFRICA
+ *                   - WORLD_ASIA
+ *                   - WORLD_EUROPE
+ *                   - WORLD_LATIN_AMERICA
+ *                   - WORLD_MIDDLE_EAST
+ *                   - WORLD_US_CANADA
+ *                   - CLIMATE
+ *                   - CORONAVIRUS
+ *     responses:
+ *       200:
+ *         description: News fetched successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 successful:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       title:
+ *                         type: string
+ *                       link:
+ *                         type: string
+ *                       pubDate:
+ *                         type: string
+ *       400:
+ *         description: Invalid category provided
+ *       500:
+ *         description: Internal server error
+ */
 
 router.post('/news', rssController.getNews.bind(rssController));
 

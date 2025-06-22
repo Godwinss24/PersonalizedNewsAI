@@ -33,7 +33,7 @@ User.init(
     },
     category: {
       type: DataTypes.ARRAY(DataTypes.ENUM(...Object.values(UserCategory))),
-      defaultValue: [UserCategory.ALL],
+      defaultValue: [UserCategory.ENGLAND],
       allowNull: false,
     },
   },

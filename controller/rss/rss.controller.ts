@@ -33,6 +33,8 @@ import {
 } from "../../services/rss.service";
 import { aResponse } from "../../interfaces/aResponse";
 import { AppError } from "../../services/appError";
+import { CustomRequest } from "../../middleware/auth";
+import { createResponse } from "../../utilities/createResponse";
 
 export class RSSController {
     techService: TechRSS;
@@ -63,7 +65,7 @@ export class RSSController {
     worldUsCanadaService: WorldUsCanadaRSS;
     climateService: ClimateRSS;
     coronavirusService: CoronavirusRSS;
-    
+
     private serviceMap: Record<string, BaseRSS>;
 
     constructor(
@@ -198,5 +200,7 @@ export class RSSController {
             return;
         }
     }
+
+
 
 }
