@@ -73,4 +73,14 @@ export class UserService {
 
         return await this.jwtService.generateJWT({ email, id: existingUser.id });
     }
+
+    async getUsersNewsCategories(email: string){
+        const user = await this.findOneUserByEmail(email);
+
+        if (!user) {
+            throw new AppError('User not found', 404);
+        }
+
+        return user.category;
+    }
 }

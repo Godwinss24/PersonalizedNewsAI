@@ -1,4 +1,4 @@
-import { UserCategory } from "enums/categories.enum";
+import { UserCategory } from "../../enums/categories.enum";
 import { Request } from "express";
 
 export interface CreateUser {
